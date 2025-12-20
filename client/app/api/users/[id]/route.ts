@@ -2,16 +2,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '../../../lib/mongodb';
 import User from '../../../lib/models/User';
-import { UserFormData } from '../../../types/user';
 
-// GET single user
+interface UserFormData {
+  name_unique: string;
+  boxid: number;
+  phone_number: string;
+}
+
+// For Next.js 16, params is a Promise
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    console.log('GET User ID:', id);
+    
     await connectToDatabase();
-    const user = await User.findById(params.id);
+    const user = await User.findById(id);
     
     if (!user) {
       return NextResponse.json(
@@ -21,7 +29,7 @@ export async function GET(
     }
     
     return NextResponse.json(user);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching user:', error);
     return NextResponse.json(
       { error: 'Failed to fetch user' },
@@ -30,17 +38,13 @@ export async function GET(
   }
 }
 
-// PUT update user
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // IMPORTANT: Await the params promise
-    const params = await context.params;
-    const { id } = params;
-    
-    console.log('PUT - User ID:', id); // Debug log
+    const { id } = await params;
+    console.log('PUT User ID:', id);
     
     await connectToDatabase();
     const body: UserFormData = await request.json();
@@ -53,21 +57,17 @@ export async function PUT(
       );
     }
     
-    console.log('Updating user with ID:', id, 'Data:', body);
-    
-    // Convert boxid to number if it's a string
-    const updateData = {
-      ...body,
-      boxid: Number(body.boxid)
-    };
+    console.log('Updating user:', { id, body });
     
     const user = await User.findByIdAndUpdate(
       id,
-      updateData,
+      {
+        name_unique: body.name_unique,
+        boxid: Number(body.boxid),
+        phone_number: body.phone_number
+      },
       { new: true, runValidators: true }
     );
-    
-    console.log('Updated user result:', user); // Debug log
     
     if (!user) {
       return NextResponse.json(
@@ -95,16 +95,13 @@ export async function PUT(
   }
 }
 
-// DELETE user
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const params = await context.params;
-    const { id } = params;
-    
-    console.log('DELETE - User ID:', id); // Debug log
+    const { id } = await params;
+    console.log('DELETE User ID:', id);
     
     await connectToDatabase();
     const user = await User.findByIdAndDelete(id);
@@ -118,7 +115,7 @@ export async function DELETE(
     
     return NextResponse.json({ 
       message: 'User deleted successfully',
-      deletedUser: user 
+      user 
     });
   } catch (error: any) {
     console.error('Error deleting user:', error);
