@@ -7,6 +7,7 @@ interface UserFormData {
   name_unique: string;
   boxid: number;
   phone_number: string;
+  place?: string;
 }
 
 // For Next.js 16, params is a Promise
@@ -64,7 +65,8 @@ export async function PUT(
       {
         name_unique: body.name_unique,
         boxid: Number(body.boxid),
-        phone_number: body.phone_number
+        phone_number: body.phone_number,
+        place: body.place
       },
       { new: true, runValidators: true }
     );

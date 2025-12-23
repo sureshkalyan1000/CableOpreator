@@ -1,7 +1,17 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { User } from '../types/user';
+import React from "react";
+import { User } from "../types/user";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Copy, Edit, Trash2, Mail, Phone, Box, Calendar } from "lucide-react";
+import { toast } from "react-hot-toast"; 
 
 interface UserCardProps {
   user: User;
@@ -10,60 +20,107 @@ interface UserCardProps {
   isDeleting?: boolean;
 }
 
-export default function UserCard({ user, onEdit, onDelete, isDeleting }: UserCardProps) {
+export default function UserCard({
+  user,
+  onEdit,
+  onDelete,
+  isDeleting,
+}: UserCardProps) {
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+ toast.success("Copied to clipboard!");
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800">
-            {user.name_unique}
-          </h3>
-          <p className="text-sm text-gray-500 mt-1">ID: {user._id?.substring(0, 8)}...</p>
+    <Card className="hover:shadow-lg transition-shadow duration-300">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <div className="space-y-1">
+            <h3 className="text-lg font-semibold text-gray-800">
+              {user.name_unique}
+            </h3>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">
+                ID: {user._id?.substring(0, 8)}...
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => user._id && copyToClipboard(user._id)}
+                title="Copy ID"
+              >
+                <Copy className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+          <div className="flex gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onEdit(user)}
+              title="Edit user"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onDelete(user._id!)}
+              disabled={isDeleting}
+              className="text-red-600 hover:text-red-800 hover:bg-red-50"
+              title="Delete user"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => onEdit(user)}
-            className="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50 transition-colors duration-200"
-            title="Edit user"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-          </button>
-          <button
-            onClick={() => onDelete(user._id!)}
-            disabled={isDeleting}
-            className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors duration-200 disabled:opacity-50"
-            title="Delete user"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
+      </CardHeader>
+
+      <CardContent className="space-y-3">
+        <div className="flex items-center gap-3">
+          <Box className="h-4 w-4 text-gray-400" />
+          <div className="flex-1">
+            <span className="text-sm text-gray-600">Box ID:</span>
+            <span className="ml-2 font-medium">
+              {user.boxid || (
+                <span className="text-gray-400 italic">Not set</span>
+              )}
+            </span>
+          </div>
         </div>
-      </div>
-      
-      <div className="space-y-3">
-        <div className="flex items-center">
-          <svg className="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-          </svg>
-          <span className="text-gray-700">Box ID: <strong>{user.boxid}</strong></span>
+
+        <div className="flex items-center gap-3">
+          <Phone className="h-4 w-4 text-gray-400" />
+          <div className="flex-1">
+            <span className="text-sm text-gray-600">Phone:</span>
+            <span className="ml-2 font-medium">
+              {user.phone_number || (
+                <span className="text-gray-400 italic">Not set</span>
+              )}
+            </span>
+          </div>
         </div>
-        
-        <div className="flex items-center">
-          <svg className="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-          </svg>
-          <span className="text-gray-700">Phone: <strong>{user.phone_number}</strong></span>
+
+        {user.place && (
+          <div className="flex items-center gap-3">
+            <Mail className="h-4 w-4 text-gray-400" />
+            <div className="flex-1">
+              <span className="text-sm text-gray-600">Place:</span>
+              <Badge variant="outline" className="ml-2">
+                {user.place}
+              </Badge>
+            </div>
+          </div>
+        )}
+      </CardContent>
+
+      <CardFooter className="pt-4 border-t">
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          <Calendar className="h-3 w-3" />
+          <span>Created: {new Date(user.createdAt!).toLocaleDateString()}</span>
         </div>
-      </div>
-      
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <p className="text-xs text-gray-500">
-          Created: {new Date(user.createdAt!).toLocaleDateString()}
-        </p>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 }
