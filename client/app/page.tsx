@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast"; // Import Toaster component
 import murugarImage from '../public/murugar.jpg';
 
 export default function Home() {
@@ -39,8 +40,8 @@ export default function Home() {
       const data = await response.json();
       setUsers(data);
     } catch (error) {
-      toast.dismiss("Fail to Load Users")
-
+      // Fixed: Use toast.error instead of toast.dismiss
+      toast.error("Failed to load users");
       console.error(error);
     } finally {
       setLoading(false);
@@ -68,13 +69,11 @@ export default function Home() {
       }
 
       toast.success("User created successfully!");
-
       setIsFormOpen(false);
       fetchUsers();
     } catch (error: any) {
       console.error(error);
       toast.error(error.message);
-
     } finally {
       setFormLoading(false);
     }
@@ -98,13 +97,11 @@ export default function Home() {
         throw new Error(data.error || "Failed to update user");
       }
       toast.success("User updated successfully!");
-
       setEditingUser(null);
       setIsFormOpen(false);
       fetchUsers();
     } catch (error: any) {
       toast.error(error.message);
-
     } finally {
       setFormLoading(false);
     }
@@ -121,7 +118,7 @@ export default function Home() {
       if (!response.ok) {
         throw new Error("Failed to delete user");
       }
-      toast.success("User Deleted suscessfully");
+      toast.success("User deleted successfully");
       setIsDeleteOpen(false);
       fetchUsers();
     } catch (error: any) {
@@ -146,6 +143,30 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Add Toaster component for toast notifications */}
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            style: {
+              background: '#10B981',
+            },
+          },
+          error: {
+            duration: 4000,
+            style: {
+              background: '#EF4444',
+            },
+          },
+        }}
+      />
+      
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -172,7 +193,7 @@ export default function Home() {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>
-                {/* {editingUser ? "Edit User" : "Create New User"} */}
+                {editingUser ? "Edit User" : "Create New User"}
               </DialogTitle>
             </DialogHeader>
             <UserForm

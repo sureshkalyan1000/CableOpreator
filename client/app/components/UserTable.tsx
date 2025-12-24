@@ -441,7 +441,7 @@ export default function UserTable({
                       
                       {user.boxid ? (
                         <span className="flex items-center gap-2">
-                          {user.boxid.toString()?.substring(0, 8)}
+                          {user.boxid.toString()}
                         </span>
                       ) : (
                         <span className="text-gray-400 italic">Not set</span>
