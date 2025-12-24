@@ -51,7 +51,7 @@ export async function PUT(
     const body: UserFormData = await request.json();
     
     // Validate required fields
-    if (!body.name_unique || !body.boxid || !body.phone_number) {
+    if (!body.name_unique || !body.boxid ) {
       return NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }

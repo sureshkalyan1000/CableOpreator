@@ -22,6 +22,8 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import {
@@ -49,8 +51,9 @@ export default function UserTable({
   deletingId,
 }: UserTableProps) {
   const [search, setSearch] = useState("");
-  const [filterField, setFilterField] = useState<FilterField>("all");
+  const [filterField, setFilterField] = useState<FilterField>("name");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showAllDetails, setShowAllDetails] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState({
     name: "",
     boxid: "",
@@ -158,6 +161,25 @@ export default function UserTable({
         {/* Simple Search */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           <div className="flex-1 flex items-center gap-2">
+            {/* Show/Hide Details Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAllDetails(!showAllDetails)}
+              className="flex items-center gap-2"
+            >
+              {showAllDetails ? (
+                <>
+                  <EyeOff className="h-4 w-4" />
+                  Hide Columns
+                </>
+              ) : (
+                <>
+                  <Eye className="h-4 w-4" />
+                  All Columns
+                </>
+              )}
+            </Button>
             <Search className="h-4 w-4 text-gray-500 shrink-0" />
             <Input
               placeholder={`Search by ${
@@ -321,21 +343,29 @@ export default function UserTable({
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-600">
             Showing {filteredUsers.length} of {users.length} users
+            {!showAllDetails && " (compact view)"}
           </span>
-          {(search || isAdvancedFilterActive) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                clearSimpleSearch();
-                clearAdvancedFilters();
-              }}
-              className="text-xs h-7"
-            >
-              <X className="h-3 w-3 mr-1" />
-              Clear all filters
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {(search || isAdvancedFilterActive) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  clearSimpleSearch();
+                  clearAdvancedFilters();
+                }}
+                className="text-xs h-7"
+              >
+                <X className="h-3 w-3 mr-1" />
+                Clear all filters
+              </Button>
+            )}
+            {!showAllDetails && (
+              <Badge variant="secondary" className="text-xs">
+                Compact View
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
 
@@ -346,9 +376,13 @@ export default function UserTable({
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Box ID</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Place</TableHead>
-              <TableHead>Created</TableHead>
+              {showAllDetails && (
+                <>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Place</TableHead>
+                  <TableHead>Created</TableHead>
+                </>
+              )}
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -356,7 +390,7 @@ export default function UserTable({
             {filteredUsers.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={showAllDetails ? 7 : 4}
                   className="text-center py-8 text-gray-500"
                 >
                   <div className="flex flex-col items-center gap-2">
@@ -414,21 +448,25 @@ export default function UserTable({
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>
-                    {user.phone_number || (
-                      <span className="text-gray-400 italic">Not set</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {user.place ? (
-                      <Badge variant="outline">{user.place}</Badge>
-                    ) : (
-                      <span className="text-gray-400 italic">Not set</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(user.createdAt!).toLocaleDateString()}
-                  </TableCell>
+                  {showAllDetails && (
+                    <>
+                      <TableCell>
+                        {user.phone_number || (
+                          <span className="text-gray-400 italic">Not set</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {user.place ? (
+                          <Badge variant="outline">{user.place}</Badge>
+                        ) : (
+                          <span className="text-gray-400 italic">Not set</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(user.createdAt!).toLocaleDateString()}
+                      </TableCell>
+                    </>
+                  )}
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
