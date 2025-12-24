@@ -27,14 +27,18 @@ export default function UserForm({
     place: user?.place || "",
   });
 
-  const [errors, setErrors] = useState<Partial<UserFormData>>({});
+  const [errors, setErrors] = useState<Partial<any>>({});
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<UserFormData> = {};
+    const newErrors: Partial<any> = {};
 
     // Only name is required
     if (!formData.name_unique.trim()) {
       newErrors.name_unique = "Name is required";
+    }
+
+    if (String(formData.boxid).length !== 10) {
+      newErrors.boxid = "Boxid should be 10 Digits";
     }
 
     setErrors(newErrors);

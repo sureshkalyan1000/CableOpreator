@@ -12,7 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "react-hot-toast"; 
+import { toast } from "react-hot-toast";
+import murugarImage from '../public/murugar.jpg';
 
 export default function Home() {
   const [users, setUsers] = useState<User[]>([]);
@@ -22,7 +23,7 @@ export default function Home() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [formLoading, setFormLoading] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const openDeleteModal = (id: string) => {
     setSelectedUserId(id);
@@ -38,8 +39,8 @@ const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
       const data = await response.json();
       setUsers(data);
     } catch (error) {
-       toast.dismiss("Fail to Load Users")
-      
+      toast.dismiss("Fail to Load Users")
+
       console.error(error);
     } finally {
       setLoading(false);
@@ -66,13 +67,13 @@ const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
         throw new Error(data.error || "Failed to create user");
       }
 
-       toast.success("User created successfully!");
-      
+      toast.success("User created successfully!");
+
       setIsFormOpen(false);
       fetchUsers();
     } catch (error: any) {
       console.error(error);
-       toast.error(error.message);
+      toast.error(error.message);
 
     } finally {
       setFormLoading(false);
@@ -96,13 +97,13 @@ const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
       if (!response.ok) {
         throw new Error(data.error || "Failed to update user");
       }
-       toast.success("User updated successfully!");
+      toast.success("User updated successfully!");
 
       setEditingUser(null);
       setIsFormOpen(false);
       fetchUsers();
     } catch (error: any) {
-       toast.error(error.message);
+      toast.error(error.message);
 
     } finally {
       setFormLoading(false);
@@ -148,13 +149,15 @@ const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
+            <div className="flex gap-1">
+              <img
+                  src={murugarImage.src}
+                  alt="Murugar"
+                  className="h-8 w-8 object-cover rounded-full"
+                />
               <h1 className="text-3xl font-bold text-gray-900">
                 User Management
               </h1>
-              <p className="text-gray-600 mt-2">
-                Manage users with unique names, box IDs, and phone numbers
-              </p>
             </div>
             <Button onClick={() => setIsFormOpen(true)} className="gap-2">
               <Plus className="h-4 w-4" />
