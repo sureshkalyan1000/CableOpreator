@@ -100,8 +100,8 @@ export default function UserDetailsPage() {
       
       // Sort payments by payFor date (most recent first)
       const sortedPayments = data.sort((a: Payment, b: Payment) => {
-        return new Date(b.payFor).getTime() - new Date(a.payFor).getTime();
-      });
+      return new Date(a.payFor).getTime() - new Date(b.payFor).getTime();
+    });
       
       setPayments(sortedPayments);
     } catch (error: any) {
@@ -764,8 +764,8 @@ export default function UserDetailsPage() {
                           </div>
                         </td>
                         <td className="p-4">
-                          <div className={`flex items-center gap-2 ${payment.balance < 0 ? 'text-red-600' : payment.balance > 0 ? 'text-green-600' : 'text-gray-600'}`}>
-                            <IndianRupee className="h-3 w-3" />
+                          <div className={`flex items-center gap-2 ${payment.balance < 0 ? 'text-red-600' : payment.balance > 0 ? 'text-gray-600' : 'text-green-600'}`}>
+                            <IndianRupee className="h-3 w-3"/>
                             <span className="font-medium">{payment.balance.toLocaleString()}</span>
                           </div>
                         </td>
@@ -811,7 +811,7 @@ export default function UserDetailsPage() {
                       <td className="p-4">
                         <div className={`flex items-center gap-2 ${totalBalance < 0 ? 'text-red-700' : totalBalance > 0 ? 'text-green-700' : 'text-gray-700'}`}>
                           <IndianRupee className="h-4 w-4" />
-                          <span>{totalBalance.toLocaleString()}</span>
+                          <span className="text-red-600">{totalBalance.toLocaleString()}</span>
                         </div>
                       </td>
                       <td className="p-4"></td>
