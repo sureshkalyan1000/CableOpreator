@@ -24,6 +24,7 @@ import {
   ChevronUp,
   Eye,
   EyeOff,
+  User as UserIcon,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import {
@@ -33,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 interface UserTableProps {
   users: User[];
@@ -50,6 +52,7 @@ export default function UserTable({
   onDelete,
   deletingId,
 }: UserTableProps) {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [filterField, setFilterField] = useState<FilterField>("name");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -64,6 +67,11 @@ export default function UserTable({
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard!");
+  };
+
+  // Function to navigate to user details page
+  const handleViewDetails = (userId: string) => {
+    router.push(`/details/${userId}`);
   };
 
   // Advanced filtering function
@@ -182,9 +190,8 @@ export default function UserTable({
             </Button>
             <Search className="h-4 w-4 text-gray-500 shrink-0" />
             <Input
-              placeholder={`Search by ${
-                filterField === "all" ? "all fields" : filterField
-              }...`}
+              placeholder={`Search by ${filterField === "all" ? "all fields" : filterField
+                }...`}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="flex-1"
@@ -423,7 +430,14 @@ export default function UserTable({
               filteredUsers.map((user) => (
                 <TableRow key={user._id}>
                   <TableCell className="font-medium">
-                    {user.name_unique}
+                    <button
+                      onClick={() => handleViewDetails(user._id!)}
+                      className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"
+                      title="View full details"
+                    >
+                      <UserIcon className="h-3 w-3" />
+                      {user.name_unique}
+                    </button>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -438,7 +452,7 @@ export default function UserTable({
                       >
                         <Copy className="h-3 w-3" />
                       </Button>
-                      
+
                       {user.boxid ? (
                         <span className="flex items-center gap-2">
                           {user.boxid.toString()}

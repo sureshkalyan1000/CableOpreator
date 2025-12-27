@@ -177,13 +177,9 @@ export default function Home() {
                   className="h-8 w-8 object-cover rounded-full"
                 />
               <h1 className="text-3xl font-bold text-gray-900">
-                User Management
+                ClientCable 
               </h1>
             </div>
-            <Button onClick={() => setIsFormOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add New User
-            </Button>
           </div>
         </div>
       </header>
@@ -216,6 +212,10 @@ export default function Home() {
                 Loading...
               </div>
             )}
+            <Button onClick={() => setIsFormOpen(true)} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add New User
+            </Button>
           </div>
 
           {loading ? (
